@@ -6,7 +6,6 @@ import com.shf.nowcoder.entity.User;
 import com.shf.nowcoder.service.UserService;
 import com.shf.nowcoder.util.CommunityConstant;
 import com.shf.nowcoder.util.CommunityUtil;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,7 @@ public class LoginController implements CommunityConstant {
     @RequestMapping(path = "/register", method = RequestMethod.POST)
     public String register(Model model, User user) {
         Map<String, Object> map = userService.register(user);
-        if (user == null || map.isEmpty()) {
+        if (map == null || map.isEmpty()) {
             model.addAttribute("msg", "注册成功,我们已经向您的邮箱发送了一封激活邮件,请尽快激活!");
             model.addAttribute("target", "/index");
             return "/site/operate-result";
@@ -72,10 +71,10 @@ public class LoginController implements CommunityConstant {
             model.addAttribute("msg", "激活成功,您的账号已经可以正常使用了!");
             model.addAttribute("target", "/login");
         } else if (result == ACTIVATION_REPEAT) {
-            model.addAttribute("msg", "无效操作,该账户已经激活过了!");
+            model.addAttribute("msg", "无效操作,该账号已经激活过了!");
             model.addAttribute("target", "/index");
         } else {
-            model.addAttribute("msg", "激活失败,您提供的激活码不正确");
+            model.addAttribute("msg", "激活失败,您提供的激活码不正确!");
             model.addAttribute("target", "/index");
         }
         return "/site/operate-result";
@@ -121,6 +120,12 @@ public class LoginController implements CommunityConstant {
             model.addAttribute("passwordMsg", map.get("passwordMsg"));
             return "/site/login";
         }
-
     }
+
+    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+    public String logout(@CookieValue("ticket") String ticket) {
+        userService.logout(ticket);
+        return "redirect:/login";
+    }
+
 }

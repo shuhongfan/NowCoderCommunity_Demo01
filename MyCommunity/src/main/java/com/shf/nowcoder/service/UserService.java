@@ -34,7 +34,7 @@ public class UserService implements CommunityConstant {
     @Value("${community.path.domain}")
     private String domain;
 
-    @Value("${community.path.upload}")
+    @Value("${server.servlet.context-path}")
     private String contextPath;
 
     @Autowired
@@ -89,13 +89,14 @@ public class UserService implements CommunityConstant {
         userMapper.insertUser(user);
 
 //        发送激活邮件
+        //激活邮件
         Context context = new Context();
-        context.setVariable("email",user.getEmail());
-        String url = domain + contextPath + "/activation/" + user.getId()+"/"+user.getActivationCode();
+        context.setVariable("email", user.getEmail());
+        // http://localhost:8080/community/activation/101/code
+        String url = domain + contextPath + "/activation/" + user.getId() + "/" + user.getActivationCode();
         context.setVariable("url", url);
-
         String content = templateEngine.process("/mail/activation", context);
-        mailClient.sendMail(user.getEmail(), "激活账户", content);
+        mailClient.sendMail(user.getEmail(), "激活账号", content);
 
         return map;
     }
@@ -105,6 +106,7 @@ public class UserService implements CommunityConstant {
         if (user.getStatus() == 1) {
             return ACTIVATION_REPEAT;
         } else if (user.getActivationCode().equals(code)) {
+            userMapper.updateStatus(userID, 1);
             return ACTIVATION_SUCCESS;
         } else {
             return ACTIVATION_FAIL;
@@ -153,5 +155,17 @@ public class UserService implements CommunityConstant {
 
         map.put("ticket", loginTicket.getTicket());
         return map;
+    }
+
+    public void logout(String ticket) {
+        loginTicketMapper.updateStatus(ticket, 1);
+    }
+
+    public LoginTicket findLoginTicket(String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    public void updateHeader(int id, String headUrl) {
+        userMapper.updateHeader(id, headUrl);
     }
 }
