@@ -1,7 +1,7 @@
 package com.shf.nowcoder.config;
 
-import com.shf.nowcoder.intercepter.LoginRequireInterceptor;
-import com.shf.nowcoder.intercepter.LoginTicketInterceptor;
+import com.shf.nowcoder.controller.intercepter.LoginRequireInterceptor;
+import com.shf.nowcoder.controller.intercepter.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

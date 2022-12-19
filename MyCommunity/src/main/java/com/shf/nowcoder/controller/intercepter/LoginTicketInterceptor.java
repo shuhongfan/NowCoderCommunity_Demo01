@@ -1,4 +1,4 @@
-package com.shf.nowcoder.intercepter;
+package com.shf.nowcoder.controller.intercepter;
 
 import com.shf.nowcoder.entity.LoginTicket;
 import com.shf.nowcoder.entity.User;
