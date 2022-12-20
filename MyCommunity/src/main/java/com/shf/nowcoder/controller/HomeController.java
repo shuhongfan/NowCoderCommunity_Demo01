@@ -5,7 +5,9 @@ import com.shf.nowcoder.entity.DiscussPost;
 import com.shf.nowcoder.entity.Page;
 import com.shf.nowcoder.entity.User;
 import com.shf.nowcoder.service.DiscussPostService;
+import com.shf.nowcoder.service.LikeService;
 import com.shf.nowcoder.service.UserService;
+import com.shf.nowcoder.util.CommunityConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,9 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LikeService likeService;
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page) {
@@ -38,6 +43,9 @@ public class HomeController {
                 map.put("post", post);
                 User user = userService.findUserById(post.getUserId());
                 map.put("user", user);
+
+                long likeCount = likeService.findEntityLikeCount(CommunityConstant.ENTITY_TYPE_POST, post.getId());
+                map.put("likeCount", likeCount);
                 discussPosts.add(map);
             }
         }

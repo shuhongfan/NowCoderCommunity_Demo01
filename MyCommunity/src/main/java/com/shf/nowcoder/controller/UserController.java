@@ -2,7 +2,10 @@ package com.shf.nowcoder.controller;
 
 import com.shf.nowcoder.annotation.LoginRequired;
 import com.shf.nowcoder.entity.User;
+import com.shf.nowcoder.service.FollowService;
+import com.shf.nowcoder.service.LikeService;
 import com.shf.nowcoder.service.UserService;
+import com.shf.nowcoder.util.CommunityConstant;
 import com.shf.nowcoder.util.CommunityUtil;
 import com.shf.nowcoder.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +46,12 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
+
+    @Autowired
+    private FollowService followService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -109,5 +118,35 @@ public class UserController {
             logger.error("读取头像失败!"+e.getMessage());
         }
     }
+
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在");
+        }
+
+//        用户
+        model.addAttribute("user", user);
+
+//        点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+        long followeeCount = followService.findFolloweeCount(userId, CommunityConstant.ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount", followeeCount);
+
+        long followerCount = followService.findFollowerCount(CommunityConstant.ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount", followerCount);
+
+        boolean hasFollowed = false;
+        if (hostHolder.getUser() != null) {
+            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), CommunityConstant.ENTITY_TYPE_USER, userId);
+        }
+        model.addAttribute("hasFollowed", hasFollowed);
+
+        return "/site/profile";
+    }
+
 
 }
