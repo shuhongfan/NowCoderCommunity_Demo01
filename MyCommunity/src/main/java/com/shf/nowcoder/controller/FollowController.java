@@ -1,7 +1,9 @@
 package com.shf.nowcoder.controller;
 
+import com.shf.nowcoder.entity.Event;
 import com.shf.nowcoder.entity.Page;
 import com.shf.nowcoder.entity.User;
+import com.shf.nowcoder.event.EventProducer;
 import com.shf.nowcoder.service.FollowService;
 import com.shf.nowcoder.service.UserService;
 import com.shf.nowcoder.util.CommunityConstant;
@@ -19,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class FollowController {
+public class FollowController implements CommunityConstant{
     @Autowired
     private FollowService followService;
 
@@ -29,11 +31,23 @@ public class FollowController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping(path = "/follow", method = RequestMethod.POST)
     @ResponseBody
     public String follow(int entityType, int entityId) {
         User user = hostHolder.getUser();
         followService.follow(user.getId(), entityType, entityId);
+
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fireEvent(event);
+
         return CommunityUtil.getJSONString(0, "已关注");
     }
 
