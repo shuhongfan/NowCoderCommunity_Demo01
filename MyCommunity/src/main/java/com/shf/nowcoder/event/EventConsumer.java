@@ -1,8 +1,11 @@
 package com.shf.nowcoder.event;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shf.nowcoder.entity.DiscussPost;
 import com.shf.nowcoder.entity.Event;
 import com.shf.nowcoder.entity.Message;
+import com.shf.nowcoder.service.DiscussPostService;
+import com.shf.nowcoder.service.ElasticSearchService;
 import com.shf.nowcoder.service.MessageService;
 import com.shf.nowcoder.util.CommunityConstant;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -26,6 +29,12 @@ public class EventConsumer implements CommunityConstant {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private ElasticSearchService elasticSearchService;
 
     @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_LIKE, TOPIC_FOLLOW})
     public void handleCommentMessage(ConsumerRecord record) {
@@ -59,5 +68,23 @@ public class EventConsumer implements CommunityConstant {
 
         message.setContent(JSONObject.toJSONString(map));
         messageService.addMessage(message);
+    }
+
+    @KafkaListener(topics = {TOPIC_PUBLISH})
+    public void handlerPublishMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息的内容为空");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息格式错误");
+            return;
+        }
+
+        DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
+        elasticSearchService.saveDiscussPost(post);
+
     }
 }
