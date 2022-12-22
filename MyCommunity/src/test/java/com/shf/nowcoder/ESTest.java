@@ -53,11 +53,11 @@ public class ESTest {
 
     @Test
     public void testInsert2() {
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(102, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(103,0,100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101,0,100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101,0,100));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101, 0, 100));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(102, 0, 100));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(103,0,100));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101,0,100));
+//        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101,0,100));
     }
 
     @Test
