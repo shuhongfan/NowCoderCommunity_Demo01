@@ -30,6 +30,6 @@ public class DataBaseEndPoint {
             logger.error("获取连接失败："+e.getMessage());
             return CommunityUtil.getJSONString(1, "获取连接失败");
         }
-        return conn;
+        return CommunityUtil.getJSONString(1, String.valueOf(conn));;
     }
 }
