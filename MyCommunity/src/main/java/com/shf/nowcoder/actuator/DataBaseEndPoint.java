@@ -23,11 +23,13 @@ public class DataBaseEndPoint {
 
     @ReadOperation
     public String checkConnection() {
+        Connection conn=null;
         try {
-            Connection conn = dataSource.getConnection();
+            conn = dataSource.getConnection();
         } catch (SQLException e) {
             logger.error("获取连接失败："+e.getMessage());
             return CommunityUtil.getJSONString(1, "获取连接失败");
         }
+        return conn;
     }
 }
