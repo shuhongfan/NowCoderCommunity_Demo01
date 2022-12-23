@@ -39,6 +39,12 @@ public class ShareController implements CommunityConstant {
     @Value("${wk.image.storage}")
     private String storage;
 
+    @Value("${quniu.bucket.header.url}")
+    private String headerUrl;
+
+    @Value("${qiniu.bucket.share.url}")
+    private String shareUrl;
+
     @RequestMapping(path = "/share", method = RequestMethod.POST)
     @ResponseBody
     public String share(String htmlUrl) {
@@ -53,8 +59,8 @@ public class ShareController implements CommunityConstant {
         eventProducer.fireEvent(event);
 
         HashMap<String, Object> map = new HashMap<>();
-        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
-
+//        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
+        map.put("shareUrl", shareUrl + "/" + fileName);
         return CommunityUtil.getJSONString(0, null, map);
     }
 
